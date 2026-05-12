@@ -4,16 +4,15 @@ Language: English · [简体中文](README-zh.md)
 
 Startup Optimizer is a lightweight Obsidian plugin that helps plugin-heavy vaults start more smoothly, especially on mobile.
 
-It lets you decide which community plugins start immediately, which ones wait a little longer, and which ones only load when you need them.
+It gives you one simple list for installed community plugins: keep important plugins loading at startup, move the rest to load later, or disable plugins you do not need.
 
 ## Highlights
 
-- Manage community plugin startup without changing your notes or workspace layout.
-- Use simple startup stages: immediate, after layout, short idle, long idle, or manual.
-- Drag plugins inside each stage to keep the startup plan easy to adjust.
-- Leave a plugin on Obsidian's normal startup path when you do not want Startup Optimizer to manage it.
-- Optionally import Obsidian's built-in startup breakdown report for better hints.
-- Show simple self-measured loading time after Startup Optimizer has loaded a managed plugin.
+- Manage installed community plugins in a simple, Obsidian-like settings list.
+- Enable or disable community plugins from the same page.
+- Choose only between two startup choices: load at startup or load later.
+- Keep enabled plugins above disabled plugins, then sort each group by plugin name.
+- Show simple self-measured loading time after Startup Optimizer has loaded a delayed plugin.
 
 ## Install
 
@@ -26,9 +25,9 @@ If you install from this repository directly, make sure you are using the built 
 
 ## Current Scope
 
-Startup Optimizer 0.1.0 focuses on community plugin startup control.
+Startup Optimizer 0.2.0 focuses on low-friction community plugin startup control.
 
-It does not optimize Obsidian core plugins, vault loading, initialization, or workspace layout. The built-in startup breakdown report is optional: importing it can improve hints, but the plugin can still be used without it.
+It does not optimize Obsidian core plugins, vault loading, initialization, or workspace layout. It also does not import Obsidian startup reports in the current 0.2.x line. The current direction is to stay simple and use self-measured loading time from plugins that Startup Optimizer actually loads later.
 
 ## License
 

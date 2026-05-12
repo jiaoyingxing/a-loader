@@ -1,7 +1,7 @@
 {
   "id": "startup-optimizer",
   "name": "Startup Optimizer",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "minAppVersion": "1.11.0",
   "description": "Optimize Obsidian startup by managing when community plugins load, especially on mobile.",
   "author": "Jiao Yingxing",

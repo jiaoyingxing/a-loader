@@ -3,7 +3,7 @@
   "name": "Startup Optimizer",
   "version": "0.2.0",
   "minAppVersion": "1.11.0",
-  "description": "Optimize Obsidian startup by managing when community plugins load, especially on mobile.",
+  "description": "Manage when community plugins load so plugin-heavy Obsidian vaults can start more smoothly, especially on mobile.",
   "author": "Jiao Yingxing",
   "isDesktopOnly": false
 }

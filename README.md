@@ -1,49 +1,64 @@
-# Startup Optimizer
+# Startup Optimizer 启动优化器
 
-Language: English · [简体中文](README-zh.md)
+语言：简体中文 · [English](README-en.md)
 
-Too many community plugins can make Obsidian feel stuck at launch, especially on mobile.
+Obsidian 插件装多了，打开时越来越慢，手机端尤其明显。
 
-Startup Optimizer keeps the idea simple: use one installed-plugin list to decide what loads at startup, what can wait, and what you do not need to keep enabled.
+本插件让你决定每个插件什么时候加载：重要的开机就启动，不急的等会再加载，暂时不用的直接关掉。被延后加载的插件还会显示耗时，方便你判断要不要调整。
 
-It is not trying to become a full system dashboard. The current goal is to make community plugin startup easier to manage with lower mental load.
+不是复杂的系统诊断工具，只是把启动管理做得更简单。
 
-## Why Startup Optimizer
+## ⚙️ 三种加载方式
 
-Obsidian plugins are useful, but starting everything at once can make a vault feel heavy.
+| 方式 | 说明 |
+|:---|:---|
+| 🚀 启动时加载 | 重要的插件，Obsidian 打开时直接启用 |
+| ⏳ 稍后加载 | 不急用的插件，延后启动，减少开机卡顿 |
+| 🚫 停用 | 暂时不需要，直接关闭 |
 
-Startup Optimizer gives you a smaller decision:
+## ✨ 功能
 
-- Keep important plugins loading at startup
-- Move less urgent plugins to load later
-- Disable plugins you do not need right now
-- See simple self-measured timing after a delayed plugin has been loaded by Startup Optimizer
+| 功能 | 说明 |
+|:---|:---|
+| 📋 插件清单 | 一页看完所有社区插件，接近原生体验 |
+| ⏱️ 耗时显示 | 被延后加载过的插件，显示自测耗时 |
+| 🔛 快速启停 | 同一页面里启用或停用，不用到处翻设置 |
+| 📱 即装即用 | 不需要导入启动报表，安装后直接管理 |
 
-## What You Can Do
+**列表布局：** 启用的排在上面，停用的排在下面，各自按名称排序。
 
-- Manage installed community plugins in a simple, Obsidian-like settings list
-- Choose only between `Load at startup` and `Load later`
-- Enable or disable community plugins from the same page
-- Keep enabled plugins above disabled plugins, with each group sorted by plugin name
-- Use it without importing Obsidian's startup report
+## 🚀 安装
 
-## Install
+> ⚠️ Startup Optimizer 为闭源插件，不在官方 Community Plugins 商店中。
 
-1. Download these files from the release assets: `main.js`, `manifest.json`, and `styles.css`.
-2. Create this folder in your vault: `<vault>/.obsidian/plugins/startup-optimizer/`.
-3. Put the downloaded files into that folder.
-4. Restart Obsidian and enable `Startup Optimizer` in Community plugins.
+### BRAT（推荐）
 
-If you install from this repository directly, use the built files in the repository root. Do not use GitHub's auto-generated source archive as the install package.
+1. 安装社区插件 **BRAT**
+2. 打开 BRAT → **Add Beta plugin**
+3. 输入 `https://github.com/jiaoyingxing/startup-optimizer`
+4. 安装完成后，在 Obsidian 设置中启用 **Startup Optimizer**
 
-## Current Scope
+> BRAT 可自动从 GitHub Releases 更新，无需手动替换文件。
 
-Startup Optimizer 0.2.0 focuses on low-friction community plugin startup control.
+### 手动安装
 
-It does not optimize Obsidian core plugins, vault loading, initialization, or workspace layout. It also does not automatically read Obsidian's internal startup timing tree.
+1. 从 [Release Assets](https://github.com/jiaoyingxing/startup-optimizer/releases) 下载 `main.js`、`manifest.json`、`styles.css`
+2. 在库中创建文件夹：`<vault>/.obsidian/plugins/startup-optimizer/`
+3. 放入三个文件
+4. 重启 Obsidian，在第三方插件设置中启用 **Startup Optimizer**
 
-Release notes: [0.2.0](release-notes/0.2.0.md)
+> ⚠️ 请使用 Release Assets 中的构建产物，不要使用 GitHub 自动生成的 Source code 压缩包。
 
-## License
+## 📦 当前边界
 
-Startup Optimizer is not open source in this beta release. The published artifacts are provided for personal Obsidian use under the included proprietary license.
+**v0.2.0** 只管理社区插件的启动时机。
+
+不优化以下内容：Obsidian 核心插件、库加载流程、工作区布局，也不自动读取内部启动计时树。
+
+版本说明：[0.2.0](https://github.com/jiaoyingxing/startup-optimizer/releases/tag/0.2.0)
+
+## 📜 许可
+
+- 当前测试版不是开源项目
+- 公开发布的构筑物仅按随附专有许可提供给个人 Obsidian 使用
+- 详见 [LICENSE](LICENSE) 文件

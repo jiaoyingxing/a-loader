@@ -1,0 +1,10 @@
+AGENTS.md
+README-zh.md
+RELEASE_NOTES*.md
+ReleaseNotes*.md
+release-notes/
+node_modules/
+data.json
+.env
+.env.*
+*.log

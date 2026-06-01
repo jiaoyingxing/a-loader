@@ -51,11 +51,11 @@ It is not a complex system diagnostics tool. It only tries to make startup manag
 
 ## 📦 Current Scope
 
-**v0.2.0** only manages community plugin startup timing.
+**v0.3.0** only manages community plugin startup timing.
 
 It does not optimize Obsidian core plugins, vault loading, workspace layout, or automatically read Obsidian's internal startup timing tree.
 
-Release notes: [0.2.0](https://github.com/jiaoyingxing/startup-optimizer/releases/tag/0.2.0)
+Release notes: [0.3.0](https://github.com/jiaoyingxing/startup-optimizer/releases/tag/0.3.0)
 
 ## 📜 License
 

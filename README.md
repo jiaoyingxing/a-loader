@@ -51,11 +51,11 @@ Obsidian 插件装多了，打开时越来越慢，手机端尤其明显。
 
 ## 📦 当前边界
 
-**v0.2.0** 只管理社区插件的启动时机。
+**v0.3.0** 只管理社区插件的启动时机。
 
 不优化以下内容：Obsidian 核心插件、库加载流程、工作区布局，也不自动读取内部启动计时树。
 
-版本说明：[0.2.0](https://github.com/jiaoyingxing/startup-optimizer/releases/tag/0.2.0)
+版本说明：[0.3.0](https://github.com/jiaoyingxing/startup-optimizer/releases/tag/0.3.0)
 
 ## 📜 许可
 

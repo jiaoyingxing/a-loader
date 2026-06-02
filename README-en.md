@@ -45,7 +45,7 @@ After it is listed in the official Community plugins directory, you can search f
 You can also download `main.js`, `manifest.json`, and `styles.css` from GitHub Releases, then place them in:
 
 ```text
-<vault>/.obsidian/plugins/startup-optimizer/
+<vault>/.obsidian/plugins/a-plugins/
 ```
 
 ## Development

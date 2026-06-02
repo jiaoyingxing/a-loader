@@ -15,7 +15,7 @@ const manifest = JSON.parse(
   readFileSync(join(dirname(currentDir), "manifest.json"), "utf8")
 ) as { id: string; version: string };
 
-if (manifest.id !== "startup-optimizer" || manifest.version !== "0.4.0") {
+if (manifest.id !== "a-plugins" || manifest.version !== "0.4.1") {
   throw new Error(`Unexpected manifest metadata: ${JSON.stringify(manifest)}`);
 }
 

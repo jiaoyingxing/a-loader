@@ -1,64 +1,62 @@
-# Startup Optimizer
+# A Plugins
 
 Language: [简体中文](README.md) · English
 
-When you install more Obsidian plugins, startup can get slower, especially on mobile.
+When an Obsidian vault has many community plugins, startup can become slow, especially on mobile. A Plugins keeps the idea simple: load essential plugins at startup, delay less urgent plugins, and disable plugins you do not currently need.
 
-Startup Optimizer lets you decide when each plugin should load: important plugins can load when Obsidian starts, less urgent plugins can wait, and plugins you do not need right now can stay disabled. Delayed plugins can also show measured loading time, so you can decide whether to adjust them later.
+It is not a complex diagnostics dashboard. It is a lightweight plugin startup management list.
 
-It is not a complex system diagnostics tool. It only tries to make startup management simpler.
-
-## ⚙️ Three Loading Modes
-
-| Mode | Description |
-|:---|:---|
-| 🚀 Load at startup | Important plugins load as Obsidian opens |
-| ⏳ Load later | Less urgent plugins start later to reduce startup pressure |
-| 🚫 Disabled | Plugins you do not currently need stay turned off |
-
-## ✨ Features
+## Features
 
 | Feature | Description |
 |:---|:---|
-| 📋 Plugin list | View community plugins on one simple, Obsidian-like page |
-| ⏱️ Timing display | Show self-measured timing for plugins loaded later |
-| 🔛 Quick enable / disable | Enable or disable plugins from the same page |
-| 📱 Ready to use | No startup report import required |
+| Load at startup | Keep essential plugins available as Obsidian opens |
+| Load later | Delay less urgent plugins to reduce startup pressure |
+| Disable plugins | Turn off plugins you do not currently need |
+| Self-measured timing | Show simple timing after A Plugins loads delayed plugins |
+| Mobile ready | The settings page is designed for both desktop and mobile |
 
-**List layout:** enabled plugins stay above disabled plugins, and each group is sorted by name.
+## Usage
 
-## 🚀 Installation
+1. Open A Plugins in Obsidian settings.
+2. Search for a plugin or find it in the list.
+3. Choose "Load at startup" or "Load later".
+4. Use the switch to enable or disable the plugin.
+5. Restart Obsidian and compare the startup feel.
 
-> ⚠️ Startup Optimizer is a closed-source plugin and is not listed in the official Community Plugins store.
+Recommendation: keep only plugins that must be immediately available in "Load at startup"; move the rest to "Load later" first.
 
-### BRAT (Recommended)
+## Current Scope
 
-1. Install the community plugin **BRAT**
-2. Open BRAT → **Add Beta plugin**
-3. Enter `https://github.com/jiaoyingxing/startup-optimizer`
-4. After installation, enable **Startup Optimizer** in Obsidian settings
-
-> BRAT can update from GitHub Releases automatically, so you do not need to replace files manually.
-
-### Manual Installation
-
-1. Download `main.js`, `manifest.json`, and `styles.css` from [Release Assets](https://github.com/jiaoyingxing/startup-optimizer/releases)
-2. Create this folder in your vault: `<vault>/.obsidian/plugins/startup-optimizer/`
-3. Put the three files into that folder
-4. Restart Obsidian and enable **Startup Optimizer** in Community plugins
-
-> ⚠️ Use the built files from Release Assets. Do not use GitHub's auto-generated Source code archives.
-
-## 📦 Current Scope
-
-**v0.3.0** only manages community plugin startup timing.
+A Plugins only manages community plugin startup timing and enable / disable state.
 
 It does not optimize Obsidian core plugins, vault loading, workspace layout, or automatically read Obsidian's internal startup timing tree.
 
-Release notes: [0.3.0](https://github.com/jiaoyingxing/startup-optimizer/releases/tag/0.3.0)
+## Privacy And Network
 
-## 📜 License
+- A Plugins does not collect your notes, plugin list, or personal data.
+- A Plugins does not require an account or connect to external services.
+- Plugin settings and self-measured timing stay in your own Obsidian vault.
 
-- This beta release is not open source
-- Published artifacts are provided for personal Obsidian use under the included proprietary license
-- See [LICENSE](LICENSE)
+## Installation
+
+After it is listed in the official Community plugins directory, you can search for **A Plugins** in Obsidian's Community plugins.
+
+You can also download `main.js`, `manifest.json`, and `styles.css` from GitHub Releases, then place them in:
+
+```text
+<vault>/.obsidian/plugins/startup-optimizer/
+```
+
+## Development
+
+```bash
+npm install
+npm run typecheck
+npm run test:logic
+npm run build
+```
+
+## License
+
+[MIT](LICENSE)

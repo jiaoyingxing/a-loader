@@ -1,10 +1,17 @@
-AGENTS.md
-README-zh.md
-RELEASE_NOTES*.md
-ReleaseNotes*.md
-release-notes/
 node_modules/
+runtime-artifacts.local.json
 data.json
 .env
 .env.*
 *.log
+
+# Local Codex / project handoff documents are not part of the public plugin repo.
+AGENTS.md
+核心文档/
+开发日志/
+临时文档/
+文档归档/
+专题文档/
+
+# Local-only release note drafts.
+release-notes/

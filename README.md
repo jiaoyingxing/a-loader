@@ -1,54 +1,54 @@
-# A Plugins
+# A Loader
 
-语言：简体中文 · [English](README-en.md)
+Language: English · [简体中文](README-zh.md)
 
-Obsidian 插件装多以后，启动变慢几乎是手机端用户都会遇到的问题。A Plugins 做的事情很简单：让你把不急着用的社区插件稍后加载，把暂时不用的插件直接停用，让插件多的库启动得更顺。
+When a vault has many community extensions, startup can become slow, especially on mobile. A Loader keeps the idea simple: load essential extensions at startup, delay less urgent ones, and disable items you do not currently need.
 
-它不是复杂的系统诊断面板，而是一页轻量的插件启动管理清单。
+It is not a complex diagnostics dashboard. It is a lightweight startup management list.
 
-## 功能
+## Features
 
-| 功能 | 说明 |
+| Feature | Description |
 |:---|:---|
-| 启动时加载 | 重要插件保持随 Obsidian 启动 |
-| 稍后加载 | 不急用的插件延后加载，减少启动压力 |
-| 停用插件 | 暂时不用的插件可以直接停用 |
-| 自测耗时 | 被 A Plugins 加载过的插件会记录简单耗时，方便后续判断 |
-| 移动端可用 | 设置页按桌面和移动端同时打磨 |
+| Load at startup | Keep essential extensions available as the app opens |
+| Load later | Delay less urgent extensions to reduce startup pressure |
+| Disable extensions | Turn off items you do not currently need |
+| Self-measured timing | Show simple timing after A Loader loads delayed extensions |
+| Mobile ready | The settings page is designed for both desktop and mobile |
 
-## 使用方式
+## Usage
 
-1. 打开 Obsidian 设置里的 A Plugins。
-2. 在插件列表中搜索或找到目标插件。
-3. 选择“启动时加载”或“稍后加载”。
-4. 用开关启用或停用插件。
-5. 重启 Obsidian，观察新的启动体感。
+1. Open A Loader in settings.
+2. Search for an extension or find it in the list.
+3. Choose "Load at startup" or "Load later".
+4. Use the switch to enable or disable it.
+5. Restart and compare the startup feel.
 
-推荐做法：只让真正需要立刻可用的插件保持“启动时加载”，其余插件优先设为“稍后加载”。
+Recommendation: keep only extensions that must be immediately available in "Load at startup"; move the rest to "Load later" first.
 
-## 当前边界
+## Current Scope
 
-A Plugins 只管理社区插件的启动时机与启停状态。
+A Loader only manages community extension startup timing and enable / disable state.
 
-它不优化 Obsidian 核心插件、库加载流程、工作区布局，也不会自动读取 Obsidian 内部启动计时树。
+It does not optimize core extensions, vault loading, workspace layout, or automatically read the internal startup timing tree.
 
-## 隐私与网络
+## Privacy And Network
 
-- A Plugins 不收集你的笔记内容、插件列表或个人数据。
-- A Plugins 不需要账号，也不连接外部服务。
-- 插件设置和自测耗时保存在你自己的 Obsidian 库中。
+- A Loader does not collect your notes, extension list, or personal data.
+- A Loader does not require an account or connect to external services.
+- Settings and self-measured timing stay in your own vault.
 
-## 安装
+## Installation
 
-上架官方社区插件目录后，可以在 Obsidian 的 Community plugins 中搜索 **A Plugins** 安装。
+After it is listed in the official directory, you can search for **A Loader** in Community plugins.
 
-也可以从 GitHub Releases 下载 `main.js`、`manifest.json`、`styles.css`，放入：
+You can also download `main.js`, `manifest.json`, and `styles.css` from GitHub Releases, then place them in:
 
 ```text
 <vault>/.obsidian/plugins/a-plugins/
 ```
 
-## 开发
+## Development
 
 ```bash
 npm install
@@ -57,10 +57,10 @@ npm run test:logic
 npm run build
 ```
 
-## 许可证
+## License
 
-A Plugins 的源码公开可审阅，但不是开源授权项目。
+The source code of A Loader is publicly available for review, but this project is not open source.
 
-你可以查看源码、审阅实现，也可以使用官方发布版本；未经作者书面许可，不得复制、再发布、改作分发或商用。
+You may inspect the source code and use official release builds. Copying, redistributing, publishing modified versions, or commercial use requires written permission from the author.
 
-详见 [LICENSE](LICENSE)。
+See [LICENSE](LICENSE).

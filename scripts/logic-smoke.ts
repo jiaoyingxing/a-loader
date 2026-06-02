@@ -15,7 +15,7 @@ const manifest = JSON.parse(
   readFileSync(join(dirname(currentDir), "manifest.json"), "utf8")
 ) as { id: string; version: string };
 
-if (manifest.id !== "a-plugins" || manifest.version !== "0.4.2") {
+if (manifest.id !== "a-plugins" || manifest.version !== "0.4.3") {
   throw new Error(`Unexpected manifest metadata: ${JSON.stringify(manifest)}`);
 }
 

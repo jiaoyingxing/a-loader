@@ -7,15 +7,14 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 const pluginId = "a-plugins";
 const outputFile = path.join(rootDir, "main.js");
-const configuredVaultRoot =
-  process.env.A_PLUGINS_VAULT_ROOT ?? process.env.STARTUP_OPTIMIZER_VAULT_ROOT ?? process.env.STARTUP_COMPASS_VAULT_ROOT;
+const configuredVaultRoot = process.env.A_PLUGINS_VAULT_ROOT;
 const runtimeDir = configuredVaultRoot
   ? path.join(path.resolve(configuredVaultRoot), ".obsidian", "plugins", pluginId)
   : "";
 const artifactSyncScript = process.env.OBSIDIAN_PLUGIN_ARTIFACT_SYNC_SCRIPT
   ? path.resolve(process.env.OBSIDIAN_PLUGIN_ARTIFACT_SYNC_SCRIPT)
   : path.join(rootDir, "scripts", "sync-runtime-artifacts.mjs");
-const configuredRuntimeConfig = process.env.A_PLUGINS_RUNTIME_CONFIG ?? process.env.STARTUP_OPTIMIZER_RUNTIME_CONFIG;
+const configuredRuntimeConfig = process.env.A_PLUGINS_RUNTIME_CONFIG;
 const runtimeConfig = configuredRuntimeConfig
   ? path.resolve(configuredRuntimeConfig)
   : path.join(rootDir, "runtime-artifacts.local.json");

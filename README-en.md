@@ -59,4 +59,8 @@ npm run build
 
 ## License
 
-[MIT](LICENSE)
+The source code of A Plugins is publicly available for review, but this project is not open source.
+
+You may inspect the source code and use official release builds. Copying, redistributing, publishing modified versions, or commercial use requires written permission from the author.
+
+See [LICENSE](LICENSE).

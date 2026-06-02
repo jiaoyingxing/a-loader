@@ -1,4 +1,5 @@
 node_modules/
+main.js
 runtime-artifacts.local.json
 data.json
 .env

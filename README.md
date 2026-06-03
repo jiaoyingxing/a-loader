@@ -1,66 +1,66 @@
 # A Loader
 
-Language: English · [简体中文](README-zh.md)
+语言：简体中文 · [English](README-en.md)
 
-When a vault has many community extensions, startup can become slow, especially on mobile. A Loader keeps the idea simple: load essential extensions at startup, delay less urgent ones, and disable items you do not currently need.
+插件装多以后，Obsidian 启动变慢几乎是手机端用户都会遇到的问题。A Loader 做的事情很直接：让必须马上用的插件启动时加载，把不急着用的插件稍后加载，把暂时不用的插件直接停用。
 
-It is not a complex diagnostics dashboard. It is a lightweight startup management list.
+A Loader 排在插件列表最前面，打开设置就能找到。界面尽量贴近 Obsidian 原生第三方插件管理页：可搜索、可分组、可直接开关插件，也可以直接选择插件是“启动时加载”还是“稍后加载”。
 
-## Features
+它不是复杂的启动分析系统，也不要求用户理解一堆加载阶段。A Loader 更像是原生插件管理页的一层补充：把插件启动这件事收成一个更简单、更好操作的清单。
 
-| Feature | Description |
-|:---|:---|
-| Load at startup | Keep essential extensions available as the app opens |
-| Load later | Delay less urgent extensions to reduce startup pressure |
-| Disable extensions | Turn off items you do not currently need |
-| Self-measured timing | Show simple timing after A Loader loads delayed extensions |
-| Mobile ready | The settings page is designed for both desktop and mobile |
+## 使用体验
 
-## Usage
+- **搜索直达**：输入插件名称就能快速定位，不用在长列表里逐行翻。
+- **自动分组**：启动时加载、稍后加载、已停用插件自动排好，状态一眼能看懂。
+- **直接开关**：不用跳回原生插件页，在同一页里就能启用或停用插件。
+- **启动选择更少**：只保留“启动时加载”和“稍后加载”两个核心选择，减少判断成本。
+- **自测计时**：A Loader 实际加载过的插件会记录启动耗时，后续可以作为调整依据。
+- **移动端适配**：设置页同时照顾桌面和手机，小屏幕上也能顺手操作。
 
-1. Open A Loader in settings.
-2. Search for an extension or find it in the list.
-3. Choose "Load at startup" or "Load later".
-4. Use the switch to enable or disable it.
-5. Restart and compare the startup feel.
+## 和 Lazy Loader 的区别
 
-Recommendation: keep only extensions that must be immediately available in "Load at startup"; move the rest to "Load later" first.
+| 对比项 | A Loader | Lazy Loader |
+|:---|:---|:---|
+| 管理方式 | 更像 Obsidian 原生插件页的补充 | 更像一套独立的延迟加载面板 |
+| 操作重点 | 搜索、分组、开关、启动选择都在同一页 | 需要逐个理解和配置不同延迟阶段 |
+| 启停状态 | 尽量同步 Obsidian 当前真实启停状态 | 更依赖插件自己的管理规则 |
+| 选择复杂度 | 只暴露“启动时加载 / 稍后加载 / 已停用” | 选项更多，适合愿意细调的用户 |
+| 界面语言 | 中文优先 | 英文界面 |
+| 移动端 | 设置页按手机端一起打磨 | 未把移动端作为主要表达重点 |
 
-## Current Scope
+## 适合谁
 
-A Loader only manages community extension startup timing and enable / disable state.
+- 插件很多，尤其手机端打开 Obsidian 时明显变慢。
+- 不想卸载插件，但也不希望所有插件都挤在启动阶段加载。
+- 希望插件管理像原生设置页一样简单，不想学习复杂规则。
+- 需要中文界面，也希望桌面和手机端都好操作。
 
-It does not optimize core extensions, vault loading, workspace layout, or automatically read the internal startup timing tree.
+## 当前边界
 
-## Privacy And Network
+A Loader 只管理社区插件的启动时机与启停状态。
 
-- A Loader does not collect your notes, extension list, or personal data.
-- A Loader does not require an account or connect to external services.
-- Settings and self-measured timing stay in your own vault.
+它不优化核心插件、库加载流程、工作区布局，也不会静默读取 Obsidian 内部的官方启动计时树。插件行里的耗时来自 A Loader 实际接管并加载插件后的自测记录。
 
-## Installation
+## 隐私与网络
 
-After it is listed in the official directory, you can search for **A Loader** in Community plugins.
+- A Loader 不收集你的笔记内容、插件列表或个人数据。
+- A Loader 不需要账号，也不连接外部服务。
+- 插件设置和自测耗时保存在你自己的库中。
 
-You can also download `main.js`, `manifest.json`, and `styles.css` from GitHub Releases, then place them in:
+## 安装
+
+上架官方社区插件目录后，可以在 Community plugins 中搜索 **A Loader** 安装。
+
+也可以从 GitHub Releases 下载 `main.js`、`manifest.json`、`styles.css`，放入：
 
 ```text
 <vault>/.obsidian/plugins/a-plugins/
 ```
 
-## Development
+## 许可证
 
-```bash
-npm install
-npm run typecheck
-npm run test:logic
-npm run build
-```
+A Loader 的源码公开可审阅，但不是开源授权项目。
 
-## License
+你可以查看源码、审阅实现，也可以使用官方发布版本；未经作者书面许可，不得复制、再发布、改作分发或商用。
 
-The source code of A Loader is publicly available for review, but this project is not open source.
-
-You may inspect the source code and use official release builds. Copying, redistributing, publishing modified versions, or commercial use requires written permission from the author.
-
-See [LICENSE](LICENSE).
+详见 [LICENSE](LICENSE)。

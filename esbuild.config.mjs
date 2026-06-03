@@ -5,16 +5,16 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
-const pluginId = "a-plugins";
+const pluginId = "a-loader";
 const outputFile = path.join(rootDir, "main.js");
-const configuredVaultRoot = process.env.A_PLUGINS_VAULT_ROOT;
+const configuredVaultRoot = process.env.A_LOADER_VAULT_ROOT;
 const runtimeDir = configuredVaultRoot
   ? path.join(path.resolve(configuredVaultRoot), ".obsidian", "plugins", pluginId)
   : "";
 const artifactSyncScript = process.env.OBSIDIAN_PLUGIN_ARTIFACT_SYNC_SCRIPT
   ? path.resolve(process.env.OBSIDIAN_PLUGIN_ARTIFACT_SYNC_SCRIPT)
   : path.join(rootDir, "scripts", "sync-runtime-artifacts.mjs");
-const configuredRuntimeConfig = process.env.A_PLUGINS_RUNTIME_CONFIG;
+const configuredRuntimeConfig = process.env.A_LOADER_RUNTIME_CONFIG;
 const runtimeConfig = configuredRuntimeConfig
   ? path.resolve(configuredRuntimeConfig)
   : path.join(rootDir, "runtime-artifacts.local.json");
@@ -49,7 +49,7 @@ async function syncRuntimeAssets() {
     return;
   }
 
-  console.log("Skipped runtime artifact sync; set A_PLUGINS_VAULT_ROOT or A_PLUGINS_RUNTIME_CONFIG to enable it.");
+  console.log("Skipped runtime artifact sync; set A_LOADER_VAULT_ROOT or A_LOADER_RUNTIME_CONFIG to enable it.");
 }
 
 await esbuild.build({

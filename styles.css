@@ -1,67 +1,67 @@
-.startup-compass-plugin-group .search-input-container {
+.a-loader-plugin-group .search-input-container {
   width: min(100%, 420px);
 }
 
-.startup-compass-plugin-group .search-input-container input {
+.a-loader-plugin-group .search-input-container input {
   border: 1px solid var(--background-modifier-border);
   border-radius: var(--radius-m);
   background-color: var(--background-primary);
 }
 
-.startup-compass-plugin-setting.setting-item {
+.a-loader-plugin-setting.setting-item {
   padding: 16px 0;
 }
 
-.startup-compass-plugin-setting .setting-item-control {
+.a-loader-plugin-setting .setting-item-control {
   flex-wrap: nowrap;
   gap: 10px;
 }
 
-.startup-compass-plugin-setting .setting-item-info {
+.a-loader-plugin-setting .setting-item-info {
   min-width: 0;
 }
 
-.startup-compass-plugin-setting .setting-item-name {
+.a-loader-plugin-setting .setting-item-name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.startup-compass-plugin-setting .setting-item-description {
+.a-loader-plugin-setting .setting-item-description {
   color: var(--text-muted);
   line-height: 1.35;
 }
 
-.startup-compass-plugin-description-line {
+.a-loader-plugin-description-line {
   overflow-wrap: anywhere;
   white-space: normal;
 }
 
-.startup-compass-plugin-description-line + .startup-compass-plugin-description-line {
+.a-loader-plugin-description-line + .a-loader-plugin-description-line {
   margin-top: 2px;
 }
 
-.startup-compass-plugin-setting.has-error .setting-item-name,
-.startup-compass-plugin-setting.has-error .setting-item-description {
+.a-loader-plugin-setting.has-error .setting-item-name,
+.a-loader-plugin-setting.has-error .setting-item-description {
   color: var(--text-error);
 }
 
-.startup-compass-plugin-setting.is-disabled-plugin {
+.a-loader-plugin-setting.is-disabled-plugin {
   opacity: 0.62;
 }
 
-.startup-compass-mode-control {
+.a-loader-mode-control {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   min-width: 142px;
 }
 
-.startup-compass-mode-control.is-disabled {
+.a-loader-mode-control.is-disabled {
   opacity: 0.62;
 }
 
-.startup-compass-mode-icon {
+.a-loader-mode-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -70,71 +70,71 @@
   color: var(--text-muted);
 }
 
-.startup-compass-mode-icon svg {
+.a-loader-mode-icon svg {
   width: 16px;
   height: 16px;
 }
 
-.startup-compass-plugin-setting select {
+.a-loader-plugin-setting select {
   width: 112px;
   min-width: 112px;
 }
 
-.startup-compass-empty-setting .setting-item-description {
+.a-loader-empty-setting .setting-item-description {
   color: var(--text-muted);
 }
 
-.startup-compass-settings a {
+.a-loader-settings a {
   color: var(--text-muted);
   text-decoration: none;
 }
 
-.startup-compass-settings a:hover {
+.a-loader-settings a:hover {
   color: var(--text-normal);
   text-decoration: underline;
 }
 
 @media (max-width: 700px) {
-  .startup-compass-plugin-group .search-input-container {
+  .a-loader-plugin-group .search-input-container {
     width: 100%;
   }
 
-  .startup-compass-plugin-setting {
+  .a-loader-plugin-setting {
     align-items: stretch;
     flex-direction: column;
     gap: 8px;
     padding: 15px 0;
   }
 
-  .startup-compass-plugin-setting .setting-item-info {
+  .a-loader-plugin-setting .setting-item-info {
     width: 100%;
     margin-inline-end: 0;
   }
 
-  .startup-compass-plugin-setting .setting-item-name {
+  .a-loader-plugin-setting .setting-item-name {
     overflow: visible;
     text-overflow: clip;
     white-space: normal;
     overflow-wrap: anywhere;
   }
 
-  .startup-compass-plugin-setting .setting-item-description {
+  .a-loader-plugin-setting .setting-item-description {
     line-height: 1.4;
   }
 
-  .startup-compass-plugin-setting .setting-item-control {
+  .a-loader-plugin-setting .setting-item-control {
     align-items: center;
     justify-content: flex-start;
     width: 100%;
     gap: 6px;
   }
 
-  .startup-compass-mode-control {
+  .a-loader-mode-control {
     min-width: 128px;
     gap: 4px;
   }
 
-  .startup-compass-plugin-setting select {
+  .a-loader-plugin-setting select {
     width: 104px;
     min-width: 104px;
     font-size: var(--font-ui-smaller);

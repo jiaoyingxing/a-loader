@@ -8,7 +8,7 @@ import {
   type PluginManifest,
   type ToggleComponent
 } from "obsidian";
-import type StartupCompassPlugin from "./main";
+import type ALoaderPlugin from "./main";
 import {
   formatMs,
   getTimingSummary
@@ -37,12 +37,12 @@ interface RenderedPluginRow {
   setting: Setting;
 }
 
-export class StartupCompassSettingTab extends PluginSettingTab {
+export class ALoaderSettingTab extends PluginSettingTab {
   private refreshQueued = false;
   private pendingScrollState: SettingScrollState | null = null;
   private searchQuery = "";
 
-  constructor(app: StartupCompassPlugin["app"], private readonly plugin: StartupCompassPlugin) {
+  constructor(app: ALoaderPlugin["app"], private readonly plugin: ALoaderPlugin) {
     super(app, plugin);
   }
 
@@ -117,7 +117,7 @@ export class StartupCompassSettingTab extends PluginSettingTab {
   override display(): void {
     this.refreshQueued = false;
     this.containerEl.empty();
-    this.containerEl.addClass("startup-compass-settings");
+    this.containerEl.addClass("a-loader-settings");
 
     this.renderPluginManager();
   }
@@ -128,7 +128,7 @@ export class StartupCompassSettingTab extends PluginSettingTab {
     const rows = this.getPluginRows();
     const renderedRows: RenderedPluginRow[] = [];
     let emptySetting: Setting | null = null;
-    const group = new SettingGroup(this.containerEl).addClass("startup-compass-plugin-group");
+    const group = new SettingGroup(this.containerEl).addClass("a-loader-plugin-group");
 
     group.addSearch(search => {
       search
@@ -148,7 +148,7 @@ export class StartupCompassSettingTab extends PluginSettingTab {
     }
 
     group.addSetting(setting => {
-      emptySetting = setting.setClass("startup-compass-empty-setting");
+      emptySetting = setting.setClass("a-loader-empty-setting");
     });
 
     this.applyPluginSearchFilter(renderedRows, emptySetting);
@@ -256,7 +256,7 @@ export class StartupCompassSettingTab extends PluginSettingTab {
 
     group.addSetting(rowSetting => {
       setting = rowSetting
-        .setClass("startup-compass-plugin-setting")
+        .setClass("a-loader-plugin-setting")
         .setName(manifest.name)
         .setDesc(this.getPluginDescription(entry, manifest, enabled));
     });
@@ -265,9 +265,9 @@ export class StartupCompassSettingTab extends PluginSettingTab {
     setting.settingEl.toggleClass("has-error", Boolean(entry.lastError));
 
     const startupMode = this.getStartupMode(entry);
-    const modeEl = setting.controlEl.createDiv({ cls: "startup-compass-mode-control" });
+    const modeEl = setting.controlEl.createDiv({ cls: "a-loader-mode-control" });
     modeEl.toggleClass("is-disabled", !enabled);
-    const modeIconEl = modeEl.createSpan({ cls: "startup-compass-mode-icon" });
+    const modeIconEl = modeEl.createSpan({ cls: "a-loader-mode-icon" });
     setIcon(modeIconEl, this.getStartupModeIcon(startupMode));
 
     const dropdown = new DropdownComponent(modeEl);
@@ -334,7 +334,7 @@ export class StartupCompassSettingTab extends PluginSettingTab {
 
     for (const line of lines) {
       const lineEl = document.createElement("div");
-      lineEl.className = "startup-compass-plugin-description-line";
+      lineEl.className = "a-loader-plugin-description-line";
       lineEl.textContent = line;
       fragment.appendChild(lineEl);
     }

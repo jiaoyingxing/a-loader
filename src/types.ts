@@ -26,7 +26,7 @@ export interface StartupRunStatus {
   message: string;
 }
 
-export interface StartupOptimizerState {
+export interface ALoaderState {
   managedPlugins: ManagedPluginEntry[];
   originalEnabledPlugins: string[];
   timingSamples: TimingSample[];
@@ -63,7 +63,7 @@ export function createDefaultRunStatus(): StartupRunStatus {
   };
 }
 
-export function createDefaultState(): StartupOptimizerState {
+export function createDefaultState(): ALoaderState {
   return {
     managedPlugins: [],
     originalEnabledPlugins: [],

@@ -7,20 +7,20 @@ import {
   normalizeTimingSamples,
   resolveVisibleEnabledPluginIds
 } from "./plugin-registry";
-import { StartupCompassSettingTab } from "./settings-tab";
+import { ALoaderSettingTab } from "./settings-tab";
 import {
   createDefaultRunStatus,
   createDefaultState,
   PHASE_LABELS,
+  type ALoaderState,
   type ManagedPluginEntry,
   type PluginPhase,
-  type StartupOptimizerState,
   type TimingSample
 } from "./types";
 
-export default class StartupCompassPlugin extends Plugin {
-  settings: StartupOptimizerState = createDefaultState();
-  private settingTab: StartupCompassSettingTab | null = null;
+export default class ALoaderPlugin extends Plugin {
+  settings: ALoaderState = createDefaultState();
+  private settingTab: ALoaderSettingTab | null = null;
   private layoutReadyHandled = false;
   private pendingPhaseChain: Promise<void> = Promise.resolve();
   private phaseTimerIds = new Set<number>();
@@ -31,7 +31,7 @@ export default class StartupCompassPlugin extends Plugin {
       await this.loadSettings();
       this.normalizeManagedPlugins();
 
-      this.settingTab = new StartupCompassSettingTab(this.app, this);
+      this.settingTab = new ALoaderSettingTab(this.app, this);
       this.addSettingTab(this.settingTab);
       this.registerCommands();
 
@@ -42,7 +42,7 @@ export default class StartupCompassPlugin extends Plugin {
         void this.handleLayoutReady();
       });
     } catch (error) {
-      console.error("[Startup Optimizer] Failed to initialize plugin.", error);
+      console.error("[A Loader] Failed to initialize plugin.", error);
     }
   }
 
@@ -211,7 +211,7 @@ export default class StartupCompassPlugin extends Plugin {
   }
 
   private async loadSettings(): Promise<void> {
-    const raw = (await this.loadData()) as Partial<StartupOptimizerState> | null;
+    const raw = (await this.loadData()) as Partial<ALoaderState> | null;
     this.settings = Object.assign(createDefaultState(), raw ?? {});
     this.settings.lastRunStatus = Object.assign(createDefaultRunStatus(), raw?.lastRunStatus ?? {});
     const legacyState = this.settings as unknown as Record<string, unknown>;
@@ -242,14 +242,14 @@ export default class StartupCompassPlugin extends Plugin {
     this.settings.timingSamples = normalizeTimingSamples(this.settings.timingSamples);
   }
 
-  private serializeState(state: StartupOptimizerState): string {
+  private serializeState(state: ALoaderState): string {
     return JSON.stringify(state);
   }
 
   private registerCommands(): void {
     this.addCommand({
-      id: "open-startup-compass-settings",
-      name: "打开启动优化器设置",
+      id: "open-a-loader-settings",
+      name: "打开 A Loader 设置",
       callback: () => this.openSettingsTab()
     });
 
@@ -360,7 +360,7 @@ export default class StartupCompassPlugin extends Plugin {
 
   private enqueuePhase(task: () => Promise<void>): Promise<void> {
     this.pendingPhaseChain = this.pendingPhaseChain.then(task).catch(error => {
-      console.error("[Startup Optimizer] phase execution failed", error);
+      console.error("[A Loader] phase execution failed", error);
     });
     return this.pendingPhaseChain;
   }

@@ -3,7 +3,7 @@ import type { InternalApp } from "./internal-types";
 import type {
   ManagedPluginEntry,
   PluginPhase,
-  StartupOptimizerState,
+  ALoaderState,
   TimingSample
 } from "./types";
 import { PHASE_ORDER } from "./types.ts";
@@ -136,7 +136,7 @@ export function normalizeTimingSamples(samples: TimingSample[]): TimingSample[] 
 
 export function getTimingSummary(
   pluginId: string,
-  state: StartupOptimizerState
+  state: ALoaderState
 ): TimingSummary | null {
   const samples = state.timingSamples
     .filter(sample => sample.pluginId === pluginId)

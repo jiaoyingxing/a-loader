@@ -18,6 +18,7 @@ const configuredRuntimeConfig = process.env.A_PLUGINS_RUNTIME_CONFIG;
 const runtimeConfig = configuredRuntimeConfig
   ? path.resolve(configuredRuntimeConfig)
   : path.join(rootDir, "runtime-artifacts.local.json");
+const shouldSkipRuntimeSync = process.argv.includes("--skip-runtime-sync");
 
 async function copySingleRuntimeAssets() {
   await mkdir(runtimeDir, { recursive: true });
@@ -30,6 +31,11 @@ async function copySingleRuntimeAssets() {
 }
 
 async function syncRuntimeAssets() {
+  if (shouldSkipRuntimeSync) {
+    console.log("Skipped runtime artifact sync (--skip-runtime-sync).");
+    return;
+  }
+
   if (existsSync(runtimeConfig) && existsSync(artifactSyncScript)) {
     const { syncRuntimeArtifacts } = await import(pathToFileURL(artifactSyncScript).href);
     const summary = await syncRuntimeArtifacts({

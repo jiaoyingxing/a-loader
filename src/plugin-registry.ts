@@ -9,6 +9,7 @@ import type {
 import { PHASE_ORDER } from "./types.ts";
 
 const MAX_TIMING_SAMPLES_PER_PLUGIN = 20;
+const LEGACY_DELAYED_PHASES = new Set(["layoutReady", "idleShort", "idleLong", "manual"]);
 
 export interface TimingSummary {
   count: number;
@@ -49,9 +50,15 @@ export function normalizeManagedPlugins(
   return manifests.map((manifest, index) => {
     const existing = existingById.get(manifest.id);
     if (existing) {
-      const rawPhase = PHASE_ORDER.includes(existing.phase) ? existing.phase : "early";
-      const legacyPinnedEarly = Boolean((existing as ManagedPluginEntry & { pinnedEarly?: boolean }).pinnedEarly);
-      const phase: PluginPhase = legacyPinnedEarly || rawPhase === "early" ? "early" : "idleLong";
+      const legacyEntry = existing as ManagedPluginEntry & {
+        pinnedEarly?: boolean;
+        phase?: string;
+      };
+      const legacyPinnedEarly = Boolean(legacyEntry.pinnedEarly);
+      const rawPhase = legacyEntry.phase ?? "early";
+      const phase: PluginPhase = legacyPinnedEarly
+        ? "early"
+        : normalizePhase(rawPhase);
 
       return {
         pluginId: manifest.id,
@@ -132,6 +139,14 @@ export function normalizeTimingSamples(samples: TimingSample[]): TimingSample[] 
   }
 
   return normalized.sort((left, right) => right.capturedAt.localeCompare(left.capturedAt));
+}
+
+function normalizePhase(rawPhase: string): PluginPhase {
+  if (PHASE_ORDER.includes(rawPhase as PluginPhase)) {
+    return rawPhase as PluginPhase;
+  }
+
+  return LEGACY_DELAYED_PHASES.has(rawPhase) ? "idleLong" : "early";
 }
 
 export function getTimingSummary(

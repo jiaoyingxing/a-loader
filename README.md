@@ -57,6 +57,15 @@ A Loader 只管理社区插件的启动时机与启停状态。
 <vault>/.obsidian/plugins/a-plugins/
 ```
 
+## 开发
+
+```bash
+npm install
+npm run typecheck
+npm run test:logic
+npm run build
+```
+
 ## 许可证
 
 A Loader 的源码公开可审阅，但不是开源授权项目。

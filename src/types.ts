@@ -1,4 +1,4 @@
-export type PluginPhase = "early" | "layoutReady" | "idleShort" | "idleLong" | "manual";
+export type PluginPhase = "early" | "idleLong";
 export type StartupRunState = "idle" | "running" | "completed" | "paused" | "auto-paused";
 
 export interface ManagedPluginEntry {
@@ -38,18 +38,12 @@ export interface ALoaderState {
 
 export const PHASE_ORDER: PluginPhase[] = [
   "early",
-  "layoutReady",
-  "idleShort",
-  "idleLong",
-  "manual"
+  "idleLong"
 ];
 
 export const PHASE_LABELS: Record<PluginPhase, string> = {
   early: "启动时加载",
-  layoutReady: "稍后加载",
-  idleShort: "稍后加载",
-  idleLong: "稍后加载",
-  manual: "稍后加载"
+  idleLong: "稍后加载"
 };
 
 export function createDefaultRunStatus(): StartupRunStatus {

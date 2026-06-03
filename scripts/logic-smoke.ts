@@ -9,13 +9,18 @@ import {
   normalizeTimingSamples,
   resolveVisibleEnabledPluginIds
 } from "../src/plugin-registry.ts";
+import {
+  completePhaseStatus,
+  computeOptimizationPlan,
+  createStartupRunStatus
+} from "../src/startup-plan.ts";
 
 const currentDir = dirname(fileURLToPath(import.meta.url));
 const manifest = JSON.parse(
   readFileSync(join(dirname(currentDir), "manifest.json"), "utf8")
 ) as { id: string; version: string };
 
-if (manifest.id !== "a-plugins" || manifest.version !== "0.4.5") {
+if (manifest.id !== "a-plugins" || !manifest.version) {
   throw new Error(`Unexpected manifest metadata: ${JSON.stringify(manifest)}`);
 }
 
@@ -121,6 +126,62 @@ if (
   || !visibleEnabled.includes("delayed-plugin")
 ) {
   throw new Error(`Unexpected visible enabled plugins: ${JSON.stringify(visibleEnabled)}`);
+}
+
+const plan = computeOptimizationPlan(
+  [
+    {
+      pluginId: "early-plugin",
+      phase: "early",
+      order: 0,
+      disabledByOptimizer: false,
+      lastError: "stale"
+    },
+    {
+      pluginId: "delayed-plugin",
+      phase: "idleLong",
+      order: 1,
+      disabledByOptimizer: false,
+      lastError: ""
+    }
+  ],
+  ["early-plugin", "delayed-plugin"]
+);
+
+if (
+  !plan.optimizerEnabled
+  || plan.controlledIds.length !== 1
+  || plan.controlledIds[0] !== "delayed-plugin"
+  || plan.lastRunStatus.state !== "idle"
+  || !plan.managedPlugins.find(entry => entry.pluginId === "delayed-plugin")?.disabledByOptimizer
+  || plan.managedPlugins.find(entry => entry.pluginId === "early-plugin")?.lastError !== ""
+) {
+  throw new Error(`Unexpected optimization plan: ${JSON.stringify(plan)}`);
+}
+
+const runStatus = createStartupRunStatus(["delayed-plugin", "second-plugin"]);
+if (
+  runStatus.state !== "running"
+  || runStatus.pendingPluginIds.length !== 2
+  || runStatus.completedPhases.length !== 0
+) {
+  throw new Error(`Unexpected startup run status: ${JSON.stringify(runStatus)}`);
+}
+
+const completedRunStatus = completePhaseStatus(
+  {
+    ...runStatus,
+    pendingPluginIds: []
+  },
+  "idleLong"
+);
+
+if (
+  completedRunStatus.state !== "completed"
+  || completedRunStatus.completedPhases[0] !== "idleLong"
+  || !completedRunStatus.lastCompletedAt
+) {
+  throw new Error(`Unexpected completed phase status: ${JSON.stringify(completedRunStatus)}`);
 }
 
 console.log("logic-smoke: ok");

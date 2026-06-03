@@ -9,9 +9,13 @@ import {
 } from "./plugin-registry";
 import { ALoaderSettingTab } from "./settings-tab";
 import {
+  completePhaseStatus,
+  computeOptimizationPlan,
+  createStartupRunStatus
+} from "./startup-plan";
+import {
   createDefaultRunStatus,
   createDefaultState,
-  PHASE_LABELS,
   type ALoaderState,
   type ManagedPluginEntry,
   type PluginPhase,
@@ -114,18 +118,12 @@ export default class ALoaderPlugin extends Plugin {
   async applyOptimizationPlan(): Promise<void> {
     const internalApp = this.getInternalApp();
     const baselineEnabled = this.getBaselineEnabledCommunityPluginIds();
-    const controlledIds = baselineEnabled.filter(pluginId => {
-      const entry = this.settings.managedPlugins.find(candidate => candidate.pluginId === pluginId);
-      return entry && entry.phase !== "early";
-    });
-    this.settings.originalEnabledPlugins = baselineEnabled;
-    this.settings.optimizerEnabled = controlledIds.length > 0;
+    const plan = computeOptimizationPlan(this.settings.managedPlugins, baselineEnabled);
+    const controlledIds = plan.controlledIds;
 
-    this.settings.managedPlugins = this.settings.managedPlugins.map(entry => ({
-      ...entry,
-      disabledByOptimizer: controlledIds.includes(entry.pluginId),
-      lastError: ""
-    }));
+    this.settings.originalEnabledPlugins = plan.originalEnabledPlugins;
+    this.settings.optimizerEnabled = plan.optimizerEnabled;
+    this.settings.managedPlugins = plan.managedPlugins;
 
     for (const pluginId of controlledIds) {
       internalApp.plugins.enabledPlugins.delete(pluginId);
@@ -138,11 +136,7 @@ export default class ALoaderPlugin extends Plugin {
     }
 
     internalApp.plugins.requestSaveConfig();
-    this.settings.lastRunStatus = {
-      ...createDefaultRunStatus(),
-      state: controlledIds.length > 0 ? "idle" : "completed",
-      message: this.getSavedPlanMessage(controlledIds.length)
-    };
+    this.settings.lastRunStatus = plan.lastRunStatus;
 
     await this.persistState({ refreshUi: true });
   }
@@ -306,23 +300,12 @@ export default class ALoaderPlugin extends Plugin {
     const pendingAutoPluginIds = this.getManagedStartupEntries().map(entry => entry.pluginId);
 
     if (!this.settings.optimizerEnabled || pendingAutoPluginIds.length === 0) {
-      this.settings.lastRunStatus = {
-        ...createDefaultRunStatus(),
-        state: "idle",
-        message: "当前没有已激活的稍后加载插件。"
-      };
+      this.settings.lastRunStatus = createStartupRunStatus([]);
       await this.persistState();
       return;
     }
 
-    this.settings.lastRunStatus = {
-      state: "running",
-      lastStartedAt: new Date().toISOString(),
-      lastCompletedAt: "",
-      pendingPluginIds: pendingAutoPluginIds,
-      completedPhases: [],
-      message: `本次启动已安排 ${pendingAutoPluginIds.length} 个稍后加载插件。`
-    };
+    this.settings.lastRunStatus = createStartupRunStatus(pendingAutoPluginIds);
     await this.persistState();
   }
 
@@ -382,7 +365,10 @@ export default class ALoaderPlugin extends Plugin {
 
     for (const entry of phaseEntries) {
       if (internalApp.plugins.plugins[entry.pluginId]) {
-        await this.removePendingPlugin(entry.pluginId);
+        const changed = this.removePendingPlugin(entry.pluginId);
+        if (changed) {
+          await this.persistState();
+        }
         continue;
       }
 
@@ -393,19 +379,22 @@ export default class ALoaderPlugin extends Plugin {
         const success = await internalApp.plugins.enablePlugin(entry.pluginId);
         const duration = performance.now() - startedAt;
         if (!success) {
-          await this.setPluginError(
+          this.setPluginError(
             entry.pluginId,
             `Obsidian 拒绝加载 ${manifest?.name ?? entry.pluginId}。`
           );
+          await this.persistState();
           continue;
         }
 
-        await this.recordSelfTimingSample(entry.pluginId, manifest, duration);
-        await this.clearPluginError(entry.pluginId);
-        await this.removePendingPlugin(entry.pluginId);
+        this.recordSelfTimingSample(entry.pluginId, manifest, duration);
+        this.clearPluginError(entry.pluginId);
+        this.removePendingPlugin(entry.pluginId);
+        await this.persistState();
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
-        await this.setPluginError(entry.pluginId, message);
+        this.setPluginError(entry.pluginId, message);
+        await this.persistState();
       }
 
       if (entry !== phaseEntries[phaseEntries.length - 1]) {
@@ -419,31 +408,20 @@ export default class ALoaderPlugin extends Plugin {
   }
 
   private async markPhaseComplete(phase: PluginPhase): Promise<void> {
-    if (!this.settings.lastRunStatus.completedPhases.includes(phase)) {
-      this.settings.lastRunStatus.completedPhases.push(phase);
-    }
+    this.settings.lastRunStatus = completePhaseStatus(this.settings.lastRunStatus, phase);
 
-    if (this.settings.lastRunStatus.pendingPluginIds.length === 0) {
+    if (this.settings.lastRunStatus.state === "completed") {
       this.settings.interruptedStartupRuns = 0;
-      this.settings.lastRunStatus = {
-        ...this.settings.lastRunStatus,
-        state: "completed",
-        lastCompletedAt: new Date().toISOString(),
-        message:
-          "稍后加载的插件已经完成。"
-      };
-    } else {
-      this.settings.lastRunStatus.message = `${PHASE_LABELS[phase]}已完成，仍有 ${this.settings.lastRunStatus.pendingPluginIds.length} 个插件等待后续阶段加载。`;
     }
 
     await this.persistState();
   }
 
-  private async recordSelfTimingSample(
+  private recordSelfTimingSample(
     pluginId: string,
     manifest: PluginManifest | undefined,
     ms: number
-  ): Promise<void> {
+  ): void {
     const sample: TimingSample = {
       pluginId,
       pluginName: manifest?.name ?? pluginId,
@@ -453,50 +431,39 @@ export default class ALoaderPlugin extends Plugin {
     };
 
     this.settings.timingSamples = addTimingSample(this.settings.timingSamples, sample);
-    await this.persistState();
   }
 
-  private async setPluginError(pluginId: string, message: string): Promise<void> {
+  private setPluginError(pluginId: string, message: string): void {
     const target = this.settings.managedPlugins.find(entry => entry.pluginId === pluginId);
     if (target) {
       target.lastError = message;
     }
-    await this.removePendingPlugin(pluginId);
+    this.removePendingPlugin(pluginId);
     this.settings.lastRunStatus.message = `加载 ${pluginId} 失败：${message}`;
-    await this.persistState();
   }
 
-  private async clearPluginError(pluginId: string): Promise<void> {
+  private clearPluginError(pluginId: string): void {
     const target = this.settings.managedPlugins.find(entry => entry.pluginId === pluginId);
-    if (target && target.lastError) {
+    if (target?.lastError) {
       target.lastError = "";
-      await this.persistState();
     }
   }
 
-  private async removePendingPlugin(pluginId: string): Promise<void> {
+  private removePendingPlugin(pluginId: string): boolean {
     if (!this.settings.lastRunStatus.pendingPluginIds.includes(pluginId)) {
-      return;
+      return false;
     }
 
     this.settings.lastRunStatus.pendingPluginIds =
       this.settings.lastRunStatus.pendingPluginIds.filter(candidate => candidate !== pluginId);
-    await this.persistState();
+    return true;
   }
 
   private getManagedStartupEntries(): ManagedPluginEntry[] {
     const originalEnabled = new Set(this.settings.originalEnabledPlugins);
     return this.settings.managedPlugins.filter(entry => {
-      return entry.disabledByOptimizer && originalEnabled.has(entry.pluginId) && entry.phase !== "early";
+      return entry.disabledByOptimizer && originalEnabled.has(entry.pluginId) && entry.phase === "idleLong";
     });
-  }
-
-  private getSavedPlanMessage(delayedCount: number): string {
-    if (delayedCount === 0) {
-      return "启动设置已保存。当前没有稍后加载插件。";
-    }
-
-    return `启动设置已保存，${delayedCount} 个插件会稍后加载。请重启 Obsidian 观察新的启动路径。`;
   }
 
   private getBaselineEnabledCommunityPluginIds(): string[] {
@@ -525,6 +492,13 @@ export default class ALoaderPlugin extends Plugin {
   }
 
   private wait(ms: number): Promise<void> {
-    return new Promise(resolve => window.setTimeout(resolve, ms));
+    return new Promise(resolve => {
+      const timerId = window.setTimeout(() => {
+        this.phaseTimerIds.delete(timerId);
+        resolve();
+      }, ms);
+
+      this.phaseTimerIds.add(timerId);
+    });
   }
 }

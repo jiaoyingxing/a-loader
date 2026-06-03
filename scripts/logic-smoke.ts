@@ -15,7 +15,7 @@ const manifest = JSON.parse(
   readFileSync(join(dirname(currentDir), "manifest.json"), "utf8")
 ) as { id: string; version: string };
 
-if (manifest.id !== "a-loader" || manifest.version !== "0.4.4") {
+if (manifest.id !== "a-plugins" || manifest.version !== "0.4.5") {
   throw new Error(`Unexpected manifest metadata: ${JSON.stringify(manifest)}`);
 }
 
@@ -69,7 +69,7 @@ const accumulatedSamples = [10, 30, 20, 500].reduce(
 );
 
 const summary = getTimingSummary("beta-plugin", { timingSamples: accumulatedSamples } as never);
-if (!summary || summary.count !== 4 || summary.ms !== 25) {
+if (!summary || summary.count !== 4 || summary.ms !== 140) {
   throw new Error(`Unexpected timing summary: ${JSON.stringify(summary)}`);
 }
 

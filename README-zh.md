@@ -45,7 +45,7 @@ A Loader 只管理社区插件的启动时机与启停状态。
 也可以从 GitHub Releases 下载 `main.js`、`manifest.json`、`styles.css`，放入：
 
 ```text
-<vault>/.obsidian/plugins/a-loader/
+<vault>/.obsidian/plugins/a-plugins/
 ```
 
 ## 开发

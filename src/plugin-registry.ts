@@ -144,21 +144,15 @@ export function getTimingSummary(
 
   if (samples.length === 0) return null;
 
-  const sortedDurations = samples
-    .map(sample => sample.ms)
-    .sort((left, right) => left - right);
-  const middle = Math.floor(sortedDurations.length / 2);
-  const median =
-    sortedDurations.length % 2 === 0
-      ? (sortedDurations[middle - 1] + sortedDurations[middle]) / 2
-      : sortedDurations[middle];
+  const average =
+    samples.reduce((total, sample) => total + sample.ms, 0) / samples.length;
   const latestCapturedAt = samples
     .map(sample => sample.capturedAt)
     .sort((left, right) => right.localeCompare(left))[0];
 
   return {
     count: samples.length,
-    ms: median,
+    ms: average,
     latestCapturedAt
   };
 }

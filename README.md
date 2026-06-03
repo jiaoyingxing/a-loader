@@ -45,7 +45,7 @@ After it is listed in the official directory, you can search for **A Loader** in
 You can also download `main.js`, `manifest.json`, and `styles.css` from GitHub Releases, then place them in:
 
 ```text
-<vault>/.obsidian/plugins/a-loader/
+<vault>/.obsidian/plugins/a-plugins/
 ```
 
 ## Development

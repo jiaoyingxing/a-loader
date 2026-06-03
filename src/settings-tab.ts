@@ -305,8 +305,7 @@ export class ALoaderSettingTab extends PluginSettingTab {
     } else {
       const timing = getTimingSummary(entry.pluginId, this.plugin.settings);
       if (timing) {
-        details.push(`累计${timing.count}次启动自测`);
-        details.push(`自测中位数${formatMs(timing.ms)}`);
+        details.push(`启动耗时：记录${timing.count}次，平均${formatMs(timing.ms)}`);
       }
 
       if (!enabled) {

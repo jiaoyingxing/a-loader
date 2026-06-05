@@ -2,6 +2,26 @@
   width: min(100%, 420px);
 }
 
+.a-loader-toolbar-setting.setting-item {
+  padding: 0 0 12px;
+}
+
+.a-loader-toolbar-setting .setting-item-info {
+  display: none;
+}
+
+.a-loader-toolbar-setting .setting-item-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.a-loader-toolbar-setting .search-input-container {
+  flex: 1 1 auto;
+  width: auto;
+}
+
 .a-loader-plugin-group .search-input-container input {
   border: 1px solid var(--background-modifier-border);
   border-radius: var(--radius-m);
@@ -99,6 +119,16 @@
     width: 100%;
   }
 
+  .a-loader-toolbar-setting .setting-item-control {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .a-loader-toolbar-setting button {
+    align-self: flex-end;
+  }
+
   .a-loader-plugin-setting {
     align-items: stretch;
     flex-direction: column;
@@ -124,7 +154,7 @@
 
   .a-loader-plugin-setting .setting-item-control {
     align-items: center;
-    justify-content: flex-start;
+    justify-content: space-between;
     width: 100%;
     gap: 6px;
   }

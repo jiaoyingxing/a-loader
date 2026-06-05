@@ -13,7 +13,8 @@ const LEGACY_DELAYED_PHASES = new Set(["layoutReady", "idleShort", "idleLong", "
 
 export interface TimingSummary {
   count: number;
-  ms: number;
+  latestMs: number;
+  averageMs: number;
   latestCapturedAt: string;
 }
 
@@ -161,14 +162,15 @@ export function getTimingSummary(
 
   const average =
     samples.reduce((total, sample) => total + sample.ms, 0) / samples.length;
-  const latestCapturedAt = samples
-    .map(sample => sample.capturedAt)
-    .sort((left, right) => right.localeCompare(left))[0];
+  const latestSample = samples
+    .slice()
+    .sort((left, right) => right.capturedAt.localeCompare(left.capturedAt))[0];
 
   return {
     count: samples.length,
-    ms: average,
-    latestCapturedAt
+    latestMs: latestSample.ms,
+    averageMs: average,
+    latestCapturedAt: latestSample.capturedAt
   };
 }
 

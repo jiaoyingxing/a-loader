@@ -74,7 +74,12 @@ const accumulatedSamples = [10, 30, 20, 500].reduce(
 );
 
 const summary = getTimingSummary("beta-plugin", { timingSamples: accumulatedSamples } as never);
-if (!summary || summary.count !== 4 || summary.ms !== 140) {
+if (
+  !summary
+  || summary.count !== 4
+  || summary.latestMs !== 500
+  || summary.averageMs !== 140
+) {
   throw new Error(`Unexpected timing summary: ${JSON.stringify(summary)}`);
 }
 

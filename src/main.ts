@@ -115,6 +115,36 @@ export default class ALoaderPlugin extends Plugin {
     await this.applyOptimizationPlan();
   }
 
+  async setAllEnabledPluginsToDelayed(): Promise<{ enabledCount: number; changedCount: number }> {
+    this.syncManagedPlugins();
+
+    const enabledPluginIds = new Set(this.getBaselineEnabledCommunityPluginIds());
+    if (enabledPluginIds.size === 0) {
+      return { enabledCount: 0, changedCount: 0 };
+    }
+
+    let changedCount = 0;
+    for (const entry of this.settings.managedPlugins) {
+      if (!enabledPluginIds.has(entry.pluginId)) continue;
+
+      if (entry.phase !== "idleLong" || entry.lastError) {
+        changedCount += 1;
+      }
+
+      entry.phase = "idleLong";
+      entry.lastError = "";
+    }
+
+    if (changedCount > 0) {
+      await this.applyOptimizationPlan();
+    }
+
+    return {
+      enabledCount: enabledPluginIds.size,
+      changedCount
+    };
+  }
+
   async applyOptimizationPlan(): Promise<void> {
     const internalApp = this.getInternalApp();
     const baselineEnabled = this.getBaselineEnabledCommunityPluginIds();

@@ -62,7 +62,12 @@ function samePath(left, right) {
 
 export async function syncRuntimeArtifacts(input = {}) {
   const projectRoot = path.resolve(input.projectRoot ?? process.cwd());
-  const configFile = input.configFile ? path.resolve(input.configFile) : "";
+  const defaultConfigFile = path.join(projectRoot, "runtime-artifacts.local.json");
+  const configFile = input.configFile
+    ? path.resolve(input.configFile)
+    : existsSync(defaultConfigFile)
+      ? defaultConfigFile
+      : "";
   const config = configFile ? await readJson(configFile) : {};
   const pluginId = input.pluginId ?? config.pluginId ?? await readPluginId(projectRoot);
   const targets = input.targets ?? config.targets ?? [];
@@ -70,7 +75,11 @@ export async function syncRuntimeArtifacts(input = {}) {
   const requiredArtifacts = new Set(input.requiredArtifacts ?? config.requiredArtifacts ?? DEFAULT_REQUIRED_ARTIFACTS);
 
   if (!Array.isArray(targets) || targets.length === 0) {
-    throw new Error("No runtime targets configured.");
+    throw new Error(
+      configFile
+        ? `No runtime targets configured in ${configFile}.`
+        : "No runtime targets configured. Create runtime-artifacts.local.json or pass a config file."
+    );
   }
 
   const availableArtifacts = [];

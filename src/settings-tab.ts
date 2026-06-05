@@ -1,5 +1,7 @@
 import {
+  ButtonComponent,
   DropdownComponent,
+  Modal,
   Notice,
   PluginSettingTab,
   Setting,
@@ -129,15 +131,34 @@ export class ALoaderSettingTab extends PluginSettingTab {
     const renderedRows: RenderedPluginRow[] = [];
     let emptySetting: Setting | null = null;
     const group = new SettingGroup(this.containerEl).addClass("a-loader-plugin-group");
+    const enabledCount = rows.filter(row => row.enabled).length;
 
-    group.addSearch(search => {
-      search
-        .setPlaceholder("搜索插件")
-        .setValue(this.searchQuery)
-        .onChange(value => {
-          this.searchQuery = value;
-          this.applyPluginSearchFilter(renderedRows, emptySetting);
-        });
+    group.addSetting(setting => {
+      setting.setClass("a-loader-toolbar-setting");
+      setting.addSearch(search => {
+        search
+          .setPlaceholder("搜索插件")
+          .setValue(this.searchQuery)
+          .onChange(value => {
+            this.searchQuery = value;
+            this.applyPluginSearchFilter(renderedRows, emptySetting);
+          });
+      });
+      setting.addButton(button => {
+        button
+          .setButtonText("全部稍后")
+          .setDisabled(enabledCount === 0)
+          .setTooltip("将所有已启用插件设为稍后加载")
+          .onClick(() => {
+            new DelayAllEnabledPluginsModal(
+              this.app,
+              enabledCount,
+              async () => {
+                await this.handleDelayAllEnabledPlugins();
+              }
+            ).open();
+          });
+      });
     });
 
     for (const row of rows) {
@@ -295,35 +316,32 @@ export class ALoaderSettingTab extends PluginSettingTab {
   private getPluginDescription(
     entry: ManagedPluginEntry,
     manifest: PluginManifest,
-    enabled: boolean
+    _enabled: boolean
   ): DocumentFragment {
     const lines = this.getPluginIdentityDescriptionLines(manifest);
-    const details: string[] = [];
 
     if (entry.lastError) {
-      details.push(`上次加载失败：${entry.lastError}`);
+      lines.push(`上次加载失败：${entry.lastError}`);
     } else {
       const timing = getTimingSummary(entry.pluginId, this.plugin.settings);
       if (timing) {
-        details.push(`启动耗时：记录${timing.count}次，平均${formatMs(timing.ms)}`);
+        lines.push(
+          `启动耗时：记录${timing.count}次，最近${formatMs(timing.latestMs)}，平均${formatMs(timing.averageMs)}`
+        );
       }
-
-      if (!enabled) {
-        details.unshift("已停用");
-      }
-    }
-
-    if (details.length > 0) {
-      lines.push(`（${details.join("、")}）`);
     }
 
     return this.createPluginDescriptionFragment(lines);
   }
 
   private getPluginIdentityDescriptionLines(manifest: PluginManifest): string[] {
-    return [
+    const metaLine = [
       manifest.version ? `版本：${manifest.version}` : "",
-      manifest.author ? `作者：${manifest.author}` : "",
+      manifest.author ? `作者：${manifest.author}` : ""
+    ].filter(Boolean).join(" · ");
+
+    return [
+      metaLine,
       this.getReadablePluginDescription(manifest)
     ].filter(Boolean);
   }
@@ -381,5 +399,55 @@ export class ALoaderSettingTab extends PluginSettingTab {
       new Notice(`${enabled ? "启用" : "停用"}插件失败：${message}`);
       this.requestRefresh();
     }
+  }
+
+  private async handleDelayAllEnabledPlugins(): Promise<void> {
+    const result = await this.plugin.setAllEnabledPluginsToDelayed();
+
+    if (result.enabledCount === 0) {
+      new Notice("当前没有已启用的插件可调整。");
+      return;
+    }
+
+    if (result.changedCount === 0) {
+      new Notice("当前已启用插件都已经是稍后加载。");
+      return;
+    }
+
+    new Notice(`已将 ${result.enabledCount} 个已启用插件设为稍后加载。`);
+  }
+}
+
+class DelayAllEnabledPluginsModal extends Modal {
+  constructor(
+    app: ALoaderPlugin["app"],
+    private readonly enabledCount: number,
+    private readonly onConfirm: () => Promise<void>
+  ) {
+    super(app);
+  }
+
+  override onOpen(): void {
+    const { contentEl } = this;
+    contentEl.empty();
+
+    contentEl.createEl("h3", { text: "全部稍后" });
+    contentEl.createEl("p", {
+      text: `将 ${this.enabledCount} 个已启用插件设为稍后加载。已停用插件不会受影响。`
+    });
+
+    const buttonRow = contentEl.createDiv({ cls: "modal-button-container" });
+
+    new ButtonComponent(buttonRow)
+      .setButtonText("取消")
+      .onClick(() => this.close());
+
+    new ButtonComponent(buttonRow)
+      .setButtonText("全部稍后")
+      .setCta()
+      .onClick(() => {
+        this.close();
+        void this.onConfirm();
+      });
   }
 }

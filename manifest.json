@@ -1,7 +1,7 @@
 {
   "id": "a-plugins",
   "name": "A Loader",
-  "version": "0.4.6",
+  "version": "0.5.0",
   "minAppVersion": "1.11.0",
   "description": "Make plugin-heavy vaults start smoother, especially on mobile.",
   "author": "Jiao Yingxing",

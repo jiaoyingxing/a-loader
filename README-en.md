@@ -57,19 +57,14 @@ You can also download `main.js`, `manifest.json`, and `styles.css` from GitHub R
 <vault>/.obsidian/plugins/a-plugins/
 ```
 
-## Development
+## Public Code And Releases
 
-```bash
-npm install
-npm run typecheck
-npm run test:logic
-npm run build
-```
+This repository contains selected code for public inspection and release materials, but it does not contain the complete source tree and is not guaranteed to build independently. Installable versions are the `main.js`, `manifest.json`, and `styles.css` assets attached to GitHub Releases.
 
 ## License
 
-The source code of A Loader is publicly available for review, but this project is not open source.
+The code and build artifacts published in this repository are available for inspection, but this project is not open source.
 
-You may inspect the source code and use official release builds. Copying, redistributing, publishing modified versions, or commercial use requires written permission from the author.
+You may inspect the published materials and use official release builds. Copying, redistributing, publishing modified versions, or commercial use requires written permission from the author.
 
 See [LICENSE](LICENSE).

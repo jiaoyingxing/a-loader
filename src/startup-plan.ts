@@ -14,6 +14,43 @@ export interface OptimizationPlan {
   lastRunStatus: StartupRunStatus;
 }
 
+export function getOptimizerOwnedPluginIds(
+  managedPlugins: ManagedPluginEntry[],
+  originalEnabledPluginIds: string[]
+): string[] {
+  const originalEnabled = new Set(originalEnabledPluginIds);
+  return managedPlugins
+    .filter(entry => {
+      return entry.disabledByOptimizer
+        && entry.phase === "idleLong"
+        && originalEnabled.has(entry.pluginId);
+    })
+    .map(entry => entry.pluginId);
+}
+
+export function restoreOwnedPluginIds(
+  enabledPluginIds: string[],
+  optimizerOwnedPluginIds: string[]
+): string[] {
+  return [...new Set([...enabledPluginIds, ...optimizerOwnedPluginIds])];
+}
+
+export function armOwnedPluginIdsForDelayedLoad(
+  enabledPluginIds: string[],
+  optimizerOwnedPluginIds: string[]
+): string[] {
+  const optimizerOwned = new Set(optimizerOwnedPluginIds);
+  return enabledPluginIds.filter(pluginId => !optimizerOwned.has(pluginId));
+}
+
+export function shouldRearmAfterPausedStartup(
+  optimizerEnabled: boolean,
+  runState: StartupRunStatus["state"],
+  pauseNextStartup: boolean
+): boolean {
+  return optimizerEnabled && runState === "paused" && !pauseNextStartup;
+}
+
 export function computeOptimizationPlan(
   managedPlugins: ManagedPluginEntry[],
   baselineEnabledPluginIds: string[]

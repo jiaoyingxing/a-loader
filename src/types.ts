@@ -26,9 +26,19 @@ export interface StartupRunStatus {
   message: string;
 }
 
+export interface RibbonLayoutSnapshot {
+  hiddenItems: Record<string, boolean>;
+}
+
+export interface RibbonLayoutSnapshots {
+  desktop?: RibbonLayoutSnapshot;
+  mobile?: RibbonLayoutSnapshot;
+}
+
 export interface ALoaderState {
   managedPlugins: ManagedPluginEntry[];
   originalEnabledPlugins: string[];
+  ribbonLayoutSnapshots: RibbonLayoutSnapshots;
   timingSamples: TimingSample[];
   lastRunStatus: StartupRunStatus;
   pauseNextStartup: boolean;
@@ -61,6 +71,7 @@ export function createDefaultState(): ALoaderState {
   return {
     managedPlugins: [],
     originalEnabledPlugins: [],
+    ribbonLayoutSnapshots: {},
     timingSamples: [],
     lastRunStatus: createDefaultRunStatus(),
     pauseNextStartup: false,

@@ -1,4 +1,22 @@
-import type { App, PluginManifest } from "obsidian";
+import type {
+  App,
+  PluginManifest,
+  Workspace,
+  WorkspaceRibbon
+} from "obsidian";
+
+export interface InternalRibbonLayout {
+  hiddenItems: Record<string, boolean>;
+}
+
+export interface InternalWorkspaceRibbon extends WorkspaceRibbon {
+  load?(layout: InternalRibbonLayout): void;
+  serialize?(): InternalRibbonLayout;
+}
+
+export interface InternalWorkspace extends Workspace {
+  leftRibbon: InternalWorkspaceRibbon;
+}
 
 export interface InternalPluginManager {
   manifests: Record<string, PluginManifest>;
@@ -22,5 +40,5 @@ export interface InternalApp extends App {
   plugins: InternalPluginManager;
   internalPlugins: InternalCorePluginManager;
   setting?: InternalSettingManager;
+  workspace: InternalWorkspace;
 }
-

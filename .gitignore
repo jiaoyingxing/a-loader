@@ -7,6 +7,10 @@ data.json
 
 # Local Codex / project handoff documents are not part of the public plugin repo.
 AGENTS.md
+CLAUDE.md
+docs/
+
+# Compatibility guard for repositories that have not completed the docs migration.
 核心文档/
 开发日志/
 临时文档/

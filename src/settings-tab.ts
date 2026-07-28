@@ -386,8 +386,14 @@ export class ALoaderSettingTab extends PluginSettingTab {
 
   private async handleStartupModeChange(pluginId: string, mode: StartupMode): Promise<void> {
     const phase: PluginPhase = mode === "early" ? "early" : "idleLong";
-    await this.plugin.setPluginStartupPhase(pluginId, phase);
-    new Notice(mode === "early" ? "已设为启动时加载。" : "已设为稍后加载，重启后生效。");
+    try {
+      await this.plugin.setPluginStartupPhase(pluginId, phase);
+      new Notice(mode === "early" ? "已设为启动时加载。" : "已设为稍后加载，重启后生效。");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      new Notice(`调整启动时机失败：${message}`);
+      this.requestRefresh();
+    }
   }
 
   private async handlePluginEnabledChange(pluginId: string, enabled: boolean): Promise<void> {
@@ -402,7 +408,15 @@ export class ALoaderSettingTab extends PluginSettingTab {
   }
 
   private async handleDelayAllEnabledPlugins(): Promise<void> {
-    const result = await this.plugin.setAllEnabledPluginsToDelayed();
+    let result: { enabledCount: number; changedCount: number };
+    try {
+      result = await this.plugin.setAllEnabledPluginsToDelayed();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      new Notice(`批量调整失败：${message}`);
+      this.requestRefresh();
+      return;
+    }
 
     if (result.enabledCount === 0) {
       new Notice("当前没有已启用的插件可调整。");

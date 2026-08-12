@@ -3,7 +3,7 @@
   "name": "A Loader",
   "version": "0.5.1",
   "minAppVersion": "1.11.0",
-  "description": "Make plugin-heavy vaults start smoother, especially on mobile.",
+  "description": "Delay less urgent community plugins so plugin-heavy vaults start lighter, especially on mobile.",
   "author": "Jiao Yingxing",
   "isDesktopOnly": false
 }

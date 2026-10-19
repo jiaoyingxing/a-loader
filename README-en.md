@@ -21,11 +21,7 @@
   </a>
 </p>
 
-When you install many Obsidian plugins, startup can become noticeably slower, especially on mobile. A Loader keeps the idea direct: load the plugins you need immediately at startup, load less urgent plugins later, and disable plugins you do not currently use.
-
-A Loader sits at the top of your plugin list, so it is easy to find in settings. The interface stays close to Obsidian's native Community plugins page: search, grouping, enable / disable, and startup choice are all handled in one list.
-
-It is not a complex startup analysis system, and it does not ask users to learn many loading phases. A Loader works more like a simple companion to the native plugin management page: it turns plugin startup into a lighter, easier list.
+Load less urgent plugins later to speed up Obsidian startup.
 
 ## 1. The Experience
 

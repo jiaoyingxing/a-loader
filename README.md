@@ -1,4 +1,4 @@
-# A Loader
+# A Loader 插件启动优化
 
 <p align="center">
   <a href="https://github.com/jiaoyingxing/a-loader/releases">

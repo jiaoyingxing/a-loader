@@ -170,3 +170,12 @@
     font-size: var(--font-ui-smaller);
   }
 }
+
+/* 设置窗左栏：宿主对第三方插件整栏隐藏页签图标（asar 规则原文
+   `.vertical-tab-header-group-items[data-section="community-plugins"]
+   .vertical-tab-nav-item-icon{display:none}`）。只放开本插件自己那一行（按
+   页签 id a-plugins），其余插件行保持宿主的纯文字形态；本规则 specificity
+   高于宿主隐藏规则，不需要 !important。宿主改版 ⇒ 回到纯文字，功能不受影响。 */
+.vertical-tab-header-group-items[data-section="community-plugins"] .vertical-tab-nav-item[data-setting-id="a-plugins"] .vertical-tab-nav-item-icon {
+  display: flex;
+}

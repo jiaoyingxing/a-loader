@@ -11,7 +11,7 @@
     <img alt="Obsidian Plugin" src="https://img.shields.io/badge/Obsidian-Plugin-7c3aed?style=flat-square" />
   </a>
   <a href="./LICENSE">
-    <img alt="License" src="https://img.shields.io/badge/License-%E6%BA%90%E7%A0%81%E5%85%AC%E5%BC%80-lightgrey?style=flat-square" />
+    <img alt="License" src="https://img.shields.io/github/license/jiaoyingxing/a-loader?style=flat-square" />
   </a>
   <a href="./README.md">
     <img alt="CN 中文版" src="https://img.shields.io/badge/CN-%E4%B8%AD%E6%96%87%E7%89%88-d32f2f?style=flat-square" />
@@ -90,19 +90,13 @@ A Loader 需要 Obsidian `1.11.0` 或更高版本。
 3. 重启 Obsidian，或重新加载插件。
 4. 启用 **A Loader**。
 
-## 7. 公开代码与发布
+## 7. 开源与许可
 
-本仓库保留部分可公开审阅的代码和发布物料，但不包含完整源码树，也不保证可以从本仓库独立构建。可安装版本以 GitHub Releases 中的 `main.js`、`manifest.json` 和 `styles.css` 为准。
+本仓库公开 A Loader 的完整源码，按 [MIT License](./LICENSE) 开源。`npm install` 后可以独立完成类型检查、Lint、逻辑自测与构建（`npm run build:bundle`，产物为 `main.js`、`manifest.json` 和 `styles.css`）。
 
-## 8. 许可证
+可安装版本仍以 [GitHub Releases](https://github.com/jiaoyingxing/a-loader/releases) 与 Obsidian 社区插件目录为准。
 
-A Loader 在本仓库公开的代码和构筑物可供审阅，但项目不是开源授权项目。
-
-你可以查看公开内容、审阅实现，也可以使用官方发布版本；未经作者书面许可，不得复制、再发布、改作分发或商用。
-
-详见 [LICENSE](LICENSE)。
-
-## 9. 联系
+## 8. 联系
 
 - Bug、可复现问题和功能建议：[GitHub Issues](https://github.com/jiaoyingxing/a-loader/issues)
 - 使用交流与产品动态：小红书搜索 **焦应行** 🔍

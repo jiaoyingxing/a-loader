@@ -11,7 +11,7 @@
     <img alt="Obsidian Plugin" src="https://img.shields.io/badge/Obsidian-Plugin-7c3aed?style=flat-square" />
   </a>
   <a href="./LICENSE">
-    <img alt="License" src="https://img.shields.io/badge/License-Source--available-lightgrey?style=flat-square" />
+    <img alt="License" src="https://img.shields.io/github/license/jiaoyingxing/a-loader?style=flat-square" />
   </a>
   <a href="./README.md">
     <img alt="CN 中文版" src="https://img.shields.io/badge/CN-%E4%B8%AD%E6%96%87%E7%89%88-d32f2f?style=flat-square" />
@@ -90,19 +90,15 @@ A Loader requires Obsidian `1.11.0` or later.
 3. Restart Obsidian, or reload community plugins.
 4. Enable **A Loader**.
 
-## 7. Public Code And Releases
+## 7. Open Source And License
 
-This repository contains selected code for public inspection and release materials, but it does not contain the complete source tree and is not guaranteed to build independently. Installable versions are the `main.js`, `manifest.json`, and `styles.css` assets attached to GitHub Releases.
+This repository contains the complete source of A Loader, published under the MIT License. After `npm install`, the tree can independently run typecheck, lint, the logic smoke test, and the bundle build (`npm run build:bundle`, producing `main.js`, `manifest.json`, and `styles.css`).
 
-## 8. License
+Installable versions remain the assets on [GitHub Releases](https://github.com/jiaoyingxing/a-loader/releases) and the Obsidian Community Plugins directory.
 
-The code and build artifacts published in this repository are available for inspection, but this project is not open source.
+A Loader is open source under the [MIT License](./LICENSE): you may use, copy, modify, and redistribute it, keeping the copyright and license notice. See [LICENSE](./LICENSE) for the full text.
 
-You may inspect the published materials and use official release builds. Copying, redistributing, publishing modified versions, or commercial use requires written permission from the author.
-
-See [LICENSE](LICENSE).
-
-## 9. Contact
+## 8. Contact
 
 - Bugs, reproducible issues, and feature requests: [GitHub Issues](https://github.com/jiaoyingxing/a-loader/issues)
 - Community and product updates: search Xiaohongshu for **焦应行** 🔍

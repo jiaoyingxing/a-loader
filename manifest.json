@@ -3,7 +3,7 @@
   "name": "A Loader",
   "version": "0.5.1",
   "minAppVersion": "1.11.0",
-  "description": "Reduce startup load for plugin-heavy vaults by delaying less urgent community plugins, especially on mobile.",
+  "description": "把不紧要的插件晚点加载，启动更快。Load non-essential plugins later to speed up startup.",
   "author": "Jiao Yingxing",
   "isDesktopOnly": false
 }

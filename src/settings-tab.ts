@@ -5,6 +5,7 @@ import {
   Notice,
   PluginSettingTab,
   Setting,
+  SettingDefinitionItem,
   SettingGroup,
   setIcon,
   type PluginManifest,
@@ -43,9 +44,18 @@ export class ALoaderSettingTab extends PluginSettingTab {
   private refreshQueued = false;
   private pendingScrollState: SettingScrollState | null = null;
   private searchQuery = "";
+  /** 声明式轨道的行引用（搜索过滤用；整轮渲染完成时由空态行 render［定义树里
+   *  最末一项］原子换入——宿主「只重取定义、不重跑 render」的索引调用不清掉它，
+   *  页内过滤照常可用，不会因空 refs 误全隐藏）。 */
+  private declarativeRows: RenderedPluginRow[] = [];
+  /** 声明式轨道的空态行引用（其 render 最后执行，兼作初始过滤的触发点）。 */
+  private declarativeEmptySetting: Setting | null = null;
 
   constructor(app: ALoaderPlugin["app"], private readonly plugin: ALoaderPlugin) {
     super(app, plugin);
+    // 设置窗左栏页签图标：宿主默认隐藏第三方插件行的图标元素，由 styles.css
+    // 按 data-setting-id 只放开本插件那一行（做法与姊妹插件 EasySync / Resojot 同源）。
+    this.icon = "loader";
   }
 
   requestRefresh(): void {
@@ -58,7 +68,9 @@ export class ALoaderSettingTab extends PluginSettingTab {
       this.pendingScrollState = null;
       this.refreshQueued = false;
       if (this.containerEl.isConnected) {
-        this.display();
+        // 轨道感知：声明式轨道严禁手动 display()（会把 <1.13 形态灌进声明式 DOM），
+        // 一律经 rerenderTrack 分叉。
+        this.rerenderTrack();
         this.restoreScrollState(scrollState);
       }
     });
@@ -124,6 +136,92 @@ export class ALoaderSettingTab extends PluginSettingTab {
     this.renderPluginManager();
   }
 
+  /**
+   * 声明式设置定义（Obsidian ≥1.13；d.ts：`getSettingDefinitions`／`update()`／
+   * `settingItems` 均 @since 1.13.0）。两组与回落 display() 逐行同构：插件管理组
+   * （无标题，cls 承接 a-loader-plugin-group 挂点）＋关于组。行内搜索沿用自建
+   * 控件（组原生 search 为 @since 1.13.1，与 1.13.0 宿主/回落形态不一致，不启用）。
+   */
+  override getSettingDefinitions(): SettingDefinitionItem[] {
+    this.containerEl.addClass("a-loader-settings");
+    this.declarativeRows = [];
+    this.declarativeEmptySetting = null;
+    this.plugin.syncManagedPlugins();
+
+    const rows = this.getPluginRows();
+    const enabledCount = rows.filter(row => row.enabled).length;
+    // 行引用「先局部收集、由空态行 render 收尾时整轮原子换入」：字段只在渲染完成点
+    // 被替换，不随 getSettingDefinitions() 重取而清空——宿主纯索引类调用后,旧 DOM
+    // 行仍在位且 refs 与之匹配，页内过滤器始终拿到与 DOM 一致的引用。
+    const collectedRows: RenderedPluginRow[] = [];
+
+    return [
+      {
+        type: "group",
+        cls: "a-loader-plugin-group",
+        items: [
+          {
+            // 工具行（搜索＋全部稍后）：仅控件无文案；不进设置搜索索引。
+            name: "",
+            searchable: false,
+            render: (setting) =>
+              this.configureToolbarRow(setting, enabledCount, () => this.declarativeRows, () => this.declarativeEmptySetting),
+          },
+          ...rows.map(row => ({
+            name: row.manifest.name,
+            desc: this.getPluginDescription(row.entry, row.manifest, row.enabled),
+            aliases: [row.manifest.id, row.manifest.author].filter(Boolean),
+            render: (setting: Setting) =>
+              this.primeDeclarativePluginRow(setting, row, collectedRows),
+          })),
+          {
+            // 空态行：定义文案为默认空态，挂 DOM 即被过滤逻辑按当前查询覆写/隐藏；
+            // 其 render 为渲染收尾点 → 此时全部插件行已收集，整轮换入 refs 并立即
+            // 应用一遍初始过滤。
+            name: "没有可管理的社区插件",
+            desc: "当前库里没有检测到其他社区插件。",
+            searchable: false,
+            render: (setting) =>
+              this.primeDeclarativeEmptyRow(setting, collectedRows),
+          },
+        ],
+      },
+      {
+        type: "group",
+        heading: "关于",
+        items: [
+          {
+            name: "产品",
+            desc: `${this.plugin.manifest.name} ${this.plugin.manifest.version}`,
+          },
+          {
+            name: "作者",
+            desc: this.createAuthorDescriptionFragment(),
+          },
+        ],
+      },
+    ];
+  }
+
+  /** 轨道判断：宿主把 getSettingDefinitions() 结果存 settingItems（@since 1.13.0，随 update() 填充）；<1.13 宿主无该字段。 */
+  private isDeclarativeTrack(): boolean {
+    const declarative = this as unknown as { settingItems?: unknown[] };
+    return declarative.settingItems !== undefined && declarative.settingItems.length > 0;
+  }
+
+  /** 轨道感知重渲染：声明式轨道一律 update()（类型投影调用，绕 obsidianmd/no-unsupported-api 静态版本缝）；
+   *  <1.13 回落 display()。注意声明式重渲染后滚动状态由 requestRefresh 的恢复链负责。 */
+  private rerenderTrack(): void {
+    if (this.isDeclarativeTrack()) {
+      const updateTab = this as unknown as { update?: () => void };
+      if (typeof updateTab.update === "function") {
+        updateTab.update();
+      }
+      return;
+    }
+    this.display();
+  }
+
   private renderPluginManager(): void {
     this.plugin.syncManagedPlugins();
 
@@ -133,33 +231,7 @@ export class ALoaderSettingTab extends PluginSettingTab {
     const group = new SettingGroup(this.containerEl).addClass("a-loader-plugin-group");
     const enabledCount = rows.filter(row => row.enabled).length;
 
-    group.addSetting(setting => {
-      setting.setClass("a-loader-toolbar-setting");
-      setting.addSearch(search => {
-        search
-          .setPlaceholder("搜索插件")
-          .setValue(this.searchQuery)
-          .onChange(value => {
-            this.searchQuery = value;
-            this.applyPluginSearchFilter(renderedRows, emptySetting);
-          });
-      });
-      setting.addButton(button => {
-        button
-          .setButtonText("全部稍后")
-          .setDisabled(enabledCount === 0)
-          .setTooltip("将所有已启用插件设为稍后加载")
-          .onClick(() => {
-            new DelayAllEnabledPluginsModal(
-              this.app,
-              enabledCount,
-              async () => {
-                await this.handleDelayAllEnabledPlugins();
-              }
-            ).open();
-          });
-      });
-    });
+    group.addSetting(setting => this.configureToolbarRow(setting, enabledCount, () => renderedRows, () => emptySetting));
 
     for (const row of rows) {
       renderedRows.push({
@@ -176,6 +248,61 @@ export class ALoaderSettingTab extends PluginSettingTab {
     this.renderAboutGroup();
   }
 
+  /** 工具行（搜索＋全部稍后；两轨道共用）：行引用经 getter 注入（回落供局部数组，声明式供字段数组）。 */
+  private configureToolbarRow(
+    setting: Setting,
+    enabledCount: number,
+    getRows: () => RenderedPluginRow[],
+    getEmpty: () => Setting | null
+  ): void {
+    setting.setClass("a-loader-toolbar-setting");
+    setting.addSearch(search => {
+      search
+        .setPlaceholder("搜索插件")
+        .setValue(this.searchQuery)
+        .onChange(value => {
+          this.searchQuery = value;
+          this.applyPluginSearchFilter(getRows(), getEmpty());
+        });
+    });
+    setting.addButton(button => {
+      button
+        .setButtonText("全部稍后")
+        .setDisabled(enabledCount === 0)
+        .setTooltip("将所有已启用插件设为稍后加载")
+        .onClick(() => {
+          new DelayAllEnabledPluginsModal(
+            this.app,
+            enabledCount,
+            async () => {
+              await this.handleDelayAllEnabledPlugins();
+            }
+          ).open();
+        });
+    });
+  }
+
+  /** 声明式插件行：收集进本轮局部数组（供收尾换入），再走两轨道共用的行内容。 */
+  private primeDeclarativePluginRow(
+    setting: Setting,
+    row: PluginListRow,
+    collectedRows: RenderedPluginRow[]
+  ): void {
+    collectedRows.push({ row, setting });
+    this.finalizePluginRow(setting, row);
+  }
+
+  /** 声明式空态行（渲染收尾点）：换入整轮 refs 并立即应用一遍初始过滤。 */
+  private primeDeclarativeEmptyRow(
+    setting: Setting,
+    collectedRows: RenderedPluginRow[]
+  ): void {
+    this.declarativeRows = collectedRows;
+    this.declarativeEmptySetting = setting;
+    setting.setClass("a-loader-empty-setting");
+    this.applyPluginSearchFilter(this.declarativeRows, setting);
+  }
+
   private renderAboutGroup(): void {
     const group = new SettingGroup(this.containerEl).setHeading("关于");
 
@@ -186,17 +313,22 @@ export class ALoaderSettingTab extends PluginSettingTab {
     });
 
     group.addSetting(setting => {
-      const desc = document.createDocumentFragment();
-      const linkEl = document.createElement("a");
-      linkEl.textContent = "Jiao Yingxing";
-      linkEl.href = "https://github.com/jiaoyingxing";
-      linkEl.target = "_blank";
-      linkEl.rel = "noopener";
-      desc.appendChild(linkEl);
       setting
         .setName("作者")
-        .setDesc(desc);
+        .setDesc(this.createAuthorDescriptionFragment());
     });
+  }
+
+  /** 作者行 desc（站点链接 fragment；定义 desc 与回落 builder 共用同一构建器）。 */
+  private createAuthorDescriptionFragment(): DocumentFragment {
+    const desc = createFragment();
+    const linkEl = createEl("a");
+    linkEl.textContent = "Jiao Yingxing";
+    linkEl.href = "https://github.com/jiaoyingxing";
+    linkEl.target = "_blank";
+    linkEl.rel = "noopener";
+    desc.appendChild(linkEl);
+    return desc;
   }
 
   private applyPluginSearchFilter(
@@ -277,11 +409,19 @@ export class ALoaderSettingTab extends PluginSettingTab {
 
     group.addSetting(rowSetting => {
       setting = rowSetting
-        .setClass("a-loader-plugin-setting")
         .setName(manifest.name)
         .setDesc(this.getPluginDescription(entry, manifest, enabled));
+      this.finalizePluginRow(setting, row);
     });
 
+    return setting;
+  }
+
+  /** 行内容（名称/desc 之后的公共部分，两轨道共用）：状态类、启动时机控件、启用开关。 */
+  private finalizePluginRow(setting: Setting, row: PluginListRow): void {
+    const { entry, enabled } = row;
+
+    setting.setClass("a-loader-plugin-setting");
     setting.settingEl.toggleClass("is-disabled-plugin", !enabled);
     setting.settingEl.toggleClass("has-error", Boolean(entry.lastError));
 
@@ -309,8 +449,6 @@ export class ALoaderSettingTab extends PluginSettingTab {
           void this.handlePluginEnabledChange(entry.pluginId, value);
         });
     });
-
-    return setting;
   }
 
   private getPluginDescription(
@@ -347,10 +485,10 @@ export class ALoaderSettingTab extends PluginSettingTab {
   }
 
   private createPluginDescriptionFragment(lines: string[]): DocumentFragment {
-    const fragment = document.createDocumentFragment();
+    const fragment = createFragment();
 
     for (const line of lines) {
-      const lineEl = document.createElement("div");
+      const lineEl = createDiv();
       lineEl.className = "a-loader-plugin-description-line";
       lineEl.textContent = line;
       fragment.appendChild(lineEl);
